@@ -4,7 +4,7 @@ Open Seed is a smart contract that provides random seeds to researchers and guar
 **👨🏻‍💻 You can access [Ropsten testnet](https://ropsten.etherscan.io/address/0xe618A5DCA9cda2f43696641D670936851Ac58D15) to use Open Seed.**
 
 ## Motivation
-Researchers often claim in their papers that:
+Researchers often claim in their papers:
 
 - We randomly selected several samples. (``Random sampling``)
 - We randomly ordered samples. (``Random sorting``)
