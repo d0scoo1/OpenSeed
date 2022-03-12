@@ -1,6 +1,7 @@
 ## Open Seed
 Open Seed is a smart contract that provides random seeds to researchers and guarantees the authenticity of the random process.
 
+**👨🏻‍💻 You can access [Ropsten testnet](https://ropsten.etherscan.io/address/0xe618A5DCA9cda2f43696641D670936851Ac58D15) to use Open Seed.**
 
 ## Motivation
 Researchers often claim in their papers that:
@@ -21,8 +22,6 @@ For example, he might exclude some unfavorable samples, or construct a biased se
 **once the random seed is revealed, the sample set cannot be modified.**
 
 In addition, **the random source should be credible and unbiased.**
-
-<hr>
 
 ### **Random Source Server**
 - One can submit an application to the server, and the server will return a random seed to him.
@@ -46,8 +45,6 @@ We have implemented a decentralized random source through smart contracts, and e
 > ⚙️ Open Seed contract deployed on [Ethereum Ropsten testnet](https://ropsten.etherscan.io).\
 🔗 Contract Address: [0xe618A5DCA9cda2f43696641D670936851Ac58D15](https://ropsten.etherscan.io/address/0xe618A5DCA9cda2f43696641D670936851Ac58D15)
 
-**👨🏻‍💻 You can access [Ropsten testnet](https://ropsten.etherscan.io/address/0xe618A5DCA9cda2f43696641D670936851Ac58D15) to use Open Seed.**
-
 Open Seed uses struct ``Record`` to record the status of each random seed.
 
 **Step 1: Create a record**
@@ -61,7 +58,7 @@ There are three arguments in the function ``create``:
 >🔔 On-chain storage is expensive, Open Seed uses ``bytes32`` to store data on the blockchain, so the data lengths is limited to 32 bytes (or 64 chars).
 Please store the SHA-256 and provide data elsewhere if you want to store more data.
 
-📌 ``bytes32Utils.py`` is a util class for converting *string* and *bytes32*.
+📌 You can use [bytes32Utils.py](/openseed/bytes32Utils.py) to convert *string* and *bytes32*.
 
 After the miner confirms the transaction *create*, we can view log ``_stateChange(address, record_id, state)`` to get ``record_id`` (the id of record). We use ``record_id`` to update or query this record in the following.
 
@@ -94,11 +91,15 @@ After the paper is published, we call the function ``lock`` to associate our wor
 
 ## How to run a smart contract
 
-- Metamask Install - https://metamask.io/
+- Ethereum Wallet
+    - [MetaMask Tutorial for Beginners - How to Set Up MetaMask](https://www.youtube.com/watch?v=Af_lQ1zUnoM)
+    - [Metamask Install](https://metamask.io/)
 - Ropsten testnet faucet
+    - [How to Get Test Ether From Faucet on Ropsten Network](https://www.youtube.com/watch?v=rSL3kP13gOI)
     - https://ropsten.oregonctf.org/
     - https://faucet.egorfine.com/
     - https://faucet.metamask.io/
+- Etherscan - [How To Use and Read Etherscan In 10 Minutes](https://youtu.be/DKBQ63txuZI?t=475)
 - IPFS (free 1GB of storage) -  https://www.pinata.cloud/
 
 ## Citation
