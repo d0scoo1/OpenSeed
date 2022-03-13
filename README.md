@@ -52,26 +52,27 @@ OpenSeed 通过智能合约实现了去中心化的随机数生成服务，每�
 
 首先，我们需要调用 function ``create(desc, data_sha256, data_ipfs)`` 来创建一条随机数记录 (record)。
 
->🔔 由于链上存储是昂贵的, OpenSeed 合约使用 ``bytes32`` 来存储大部分数据, 因此数据的大小被限制为 32 bytes (或 64 chars)。\
-如果你的数据（例如 desc）长度超过了 32 bytes，你可以提交数据的 SHA-256 ，并在其他地方提供完整数据的下载。
-
+>🔔 由于链上存储是昂贵的, OpenSeed 合约使用 ``bytes32`` 来存储大部分数据, 因此数据的大小被限制为 32 bytes (或 64 chars)。
+如果你的数据（例如 desc）长度超过了 32 bytes，你可以提交数据的 SHA-256 ，并在其他地方提供完整数据的下载。\
 📌 我们提供了一段Python代码 [bytes32Utils.py](/openseed/bytes32Utils.py) 来转换 *string* 和 *bytes32*.
 
-*create* 合约交易被确认后，我们查看日志 ``_stateChange(address, record_id, state)`` 来获得记录的id ``record_id``. We use ``record_id`` to update or query this record in the following.
+*create* 合约交易被确认后，查看日志 ``_stateChange(address, record_id, state)`` 来获得记录的 id ``record_id``. 接下来我们需要使用日志 id ``record_id`` 来查询或更新 record 状态。
 
 <img src="imgs/create_log.png" height = "120" />
 
 
 **Step 2: 获得随机数**
 
-OpenSeed 提交 *create* 交易被确认后，使用下一个区块哈希值作为随机数，因此需要等待一个区块（约13秒）。
+OpenSeed 使用下一个区块哈希值作为随机数，因此提交 *create* 交易后，需要等待一个区块（约13秒）。
 
->⚠️<b>注意:</b> 由于EVM中只存储最近256个区块的信息，因此，在 ``create`` 确认后，我们需要尽快调用 ``update`` 方法刷新 record 中的随机数。记得把交易费调高，以尽快确认 *update* 交易！
-
-然后，我们调用 function ``update(record_id)`` 来刷新 record 中的随机数。``update`` 需要提交对应的 ``_record_id``。
+然后，我们调用 function ``update(record_id)`` 来刷新 record 中的随机数。``update`` 需要提交对应的 ``record_id``。
 我们可以查看日志 ``_openSeed(address, record_id, random seed)`` 来获得随机数 (random seed)。
 
 <img src="imgs/update_log.png" height = "120" />
+
+>⚠️<b>注意:</b> 由于EVM中只存储最近256个区块的信息，因此，在 ``create`` 确认后，我们需要尽快调用 ``update`` 方法刷新 record 中的随机数。记得把交易费调高，以尽快确认 *update* 交易！
+
+
 
 ```python
 #将获取的区块哈希值（随机数）作为随机种子
@@ -84,14 +85,19 @@ print(random.random())
 
 **Step 3: 锁定**
 
-当论文发表后，我们可以调用 function ``lock(record_id, access)`` 来将我们的论文doi或在线资源和链上的随机数记录绑定起来。
+论文发表后，我们可以调用 function ``lock(record_id, access)`` 来将我们的论文 doi 或*文章的在线资源*与链上的随机数记录绑定起来。
 
->📄 我们应该在文章中提供 OpenSeed 的``合约地址(contract address)``，``钱包地址(wallet address)``，`记录id (record_id)`以及数据资源等，这样每个人都可以验证实验的真实性。\
-- ``getOneRecord(wallet address, record_id)`` 查询一条随机数记录
-- ``getUserRecords(wallet address)`` 查询一个用户的所有随机数记录
+>📄 我们应该在文章中提供 OpenSeed 的``合约地址(contract address)``，``钱包地址(wallet address)``，`记录id (record_id)`以及数据资源等信息，这样每个人都可以验证实验的真实性。
 
 >🔔 研究者应一直使用同一个钱包地址来获得随机数，这样每个人都可以方便的查询到所有的记录\
 >🔔 一篇文章如果要用多个随机数，不要申请多条记录，应该将获得随机数作为随机种子来生成多个随机数。
+
+**Step 4: 查询**
+
+OpenSeed 提供了一些查询方法:
+- ``getOneRecord(wallet address, record_id)`` 查询一条随机数记录
+- ``getUserRecords(wallet address)`` 查询一个用户的所有随机数记录
+- ``getUsers`` 查询所有使用 OpenSeed 用户的 address
 
 
 ## 引用
@@ -105,80 +111,94 @@ print(random.random())
 
 >⚠️<b>注意:</b> 我们所有的步骤都是在 [Ropsten 测试链](https://ropsten.etherscan.io) 上运行的。
 
-### 以太坊钱包
+### 1. 配置以太坊钱包
 
 首先准备一个以太坊钱包，这里介绍如何使用 [Metamask](https://metamask.io/) 插件生成一个钱包。
 
-1. 首先访问 https://metamask.io/ 安装浏览器插件\
-<img src="imgs/metamask_insatll.png" height = "160" />
+1. 首先访问 https://metamask.io/ 安装浏览器插件
 
-2. 如果你没有钱包，选择创建钱包\
-<img src="imgs/metamask_wallet_0.png" height = "160" />
+<img src="imgs/metamask_insatll.png" height = "240" />
 
-3. 打开测试网络选项\
-<img src="imgs/metamask_wallet_1.png" height = "160" />
+2. 如果你没有钱包，选择创建钱包
+
+<img src="imgs/metamask_wallet_0.png" height = "240" />
+
+3. 打开测试网络选项
+
+<img src="imgs/metamask_wallet_1.png" height = "180" />
 <img src="imgs/metamask_wallet_2.png" height = "120" />
 
-4. 切换网络为 Ropsten 测试网络，点击账户可以**复制账户地址**\
-<img src="imgs/metamask_wallet_3.png" height = "160" />
+4. 切换网络为 Ropsten 测试网络，点击账户可以**复制账户地址**
 
-### 获得一些 Ether
-现在你的钱包是空的，你可以通过 Ropsten testnet faucet 免费获得一些以太币。下面是一些 Ropsten testnet faucet
+<img src="imgs/metamask_wallet_3.png" height = "240" />
+
+### 2. 获得一些 Ether
+现在你的钱包是空的，你可以通过 Ropsten testnet faucet 免费获得一些以太币。\
+下面是一些 Ropsten testnet faucet
 - https://ropsten.oregonctf.org/
 - https://faucet.egorfine.com/
 - https://faucet.metamask.io/
 
 打开上述网站，输入刚刚复制的账户地址，获得一些Ether。
 
-### Etherscan
+### 3. 查看区块链信息
+
 [Etherscan](https://etherscan.io/)是一个区块链浏览器，它提供了丰富的区块链信息。由于 OpenSeed 还没有提供 web3 服务，因此我们使用 [Ropsten Etherscan](https://ropsten.etherscan.io/) 来运行智能合约。
 
 1. 首先打开 OpenSeed 合约 https://ropsten.etherscan.io/address/0xe618a5dca9cda2f43696641d670936851ac58d15 \
-查看地址的交易 (Transaction), 合约 (Contract), 日志 (Events)\
-<img src="imgs/etherscan.png" height = "260" />
+查看地址的交易 (Transaction), 合约 (Contract), 日志 (Events)
+
+<img src="imgs/etherscan.png" height = "320" />
 
 2. 依次点击 Contract, Write Contract, Connect to Web3, 选择 MetaMask 连接到你的以太坊账户
+
 <img src="imgs/etherscan_1.png" height = "160" />
-<img src="imgs/etherscan_2.png" height = "200" />
+<img src="imgs/etherscan_2.png" height = "240" />
 
 3. 连接成功后会显示 **Connected -Web3**\
 然后我们点击展开 ``create`` 方法，输入三个参数，点击 Write 提交。\
-提交后会跳出 MetaMask 插件，这里我们需要修改一下交易费。\
+提交后会跳出 MetaMask 插件，这里我们需要修改一下交易费。
+
 <img src="imgs/etherscan_3.png" height = "260" />
 <img src="imgs/etherscan_4.png" height = "260" />
 
->👉 这里输入的参数是 ``bytes32`` 格式。类似于0x4d61792074686520466f726365206265207769746820796f752e000000000000 这样一段数据。\
+>👉 ``create`` 方法输入的参数是 ``bytes32`` 格式。如 0x4d61792074686520466f726365206265207769746820796f752e000000000000 这样一段数据。\
 📌 我们提供了一段Python代码 [bytes32Utils.py](/openseed/bytes32Utils.py), 你可以用它来转换 *string* 和 *bytes32*。\
-👨‍💻 你可以通过代码，或[在线网站](https://crypot.51strive.com/sha256.html)获得数据的SHA-256, 记得在结果前补齐0x...
+👨‍💻 你可以使用程序或 [在线网站](https://crypot.51strive.com/sha256.html) 获得数据的 SHA-256, 记得在结果前补齐 0x...
 
 4. 由于是在测试链上，为了交易尽快被打包到区块，我们最好设置交易费为高\
-然后确认发送交易\
-<img src="imgs/etherscan_5.png" height = "240" />
-<img src="imgs/etherscan_6.png" height = "240" />
-<img src="imgs/etherscan_7.png" height = "240" />
+然后确认发送交易
+
+<img src="imgs/etherscan_5.png" height = "280" />
+<img src="imgs/etherscan_6.png" height = "280" />
+<img src="imgs/etherscan_7.png" height = "280" />
 
 5. 发送成功后， view 旁边会显示 View your transaction\
-点击查看我们的交易。\
+点击查看我们的交易。
+
 <img src="imgs/etherscan_8.png" height = "60" />
 
 6. 等待交易成功后，\
 你可以点击 From 的地址查看自己账户的交易记录，\
 也可以点击 Contract 地址查看合约的交易记录，\
-这里我们点击 Logs 查看日志\
-<img src="imgs/etherscan_9.png" height = "280" />
+这里我们点击 Logs 查看日志
+
+<img src="imgs/etherscan_9.png" height = "360" />
 
 7. 日志显示了 ``create`` 中 event 发出的信息\
-你还可以通过 State 等查看合约的运行结果 \
+你还可以通过 State 等查看合约的运行结果
+
 <img src="imgs/etherscan_10.png" height = "280" />
 
 8. 🎉 恭喜，你已经成功运行了一个智能合约交易！
 
 9. 接下来，你可以尝试调用 Read Contract 来查看你刚才提交的 record。\
-``getOneRecord`` 中返回的结果请参阅 [如何使用OpenSeed](如何使用OpenSeed) 中对于 struct record 的介绍\
-<img src="imgs/etherscan_11.png" height = "440" />
+``getOneRecord`` 中返回的结果请参阅 [如何使用OpenSeed](如何使用OpenSeed) 中对于 struct record 的介绍
+
+<img src="imgs/etherscan_11.png" height = "460" />
 
 ### IPFS
-⭐️ IPFS 是一个分布式存储，这里我们提供一个免费的 1GB IPFS存储 -  https://www.pinata.cloud/
+⭐️ IPFS 是一个分布式存储，这是一个免费的 1GB IPFS存储 -  https://www.pinata.cloud/
 
 
 ## License
