@@ -1,7 +1,7 @@
 import binascii
 
 '''
-Input: bytes32: 0x7465737400000000000000000000000000000000000000000000000000000000
+bytes32: 0x7465737400000000000000000000000000000000000000000000000000000000
 https://onlinestringtools.com/convert-bytes-to-string
 '''
 def bytes32ToString(b_text:int or str):
@@ -13,13 +13,12 @@ def bytes32ToString(b_text:int or str):
 
     b_text = b_text.replace("0x" or "00","")
     text = str(binascii.a2b_hex(b_text),'utf-8')
-    print("\nInput:",b_text,
+    print("\nText:",b_text,
         "\nText :",text)
-
     return text
 
 '''
-Input is limited to 32 bytes (1 byte = 2 ASCII char, so total 64 chars).
+Text is limited to 32 bytes (1 byte = 2 ASCII char, so total 64 chars).
 '''
 def stringToBytes32(text:str):
     b_text = binascii.b2a_hex(text.encode("utf-8")).decode('utf-8')
@@ -31,7 +30,7 @@ def stringToBytes32(text:str):
         b_text = b_text + padding[0:int((64 - b_size))]
 
     b_text = "0x"+b_text
-    print("\nInput  :",text,
+    print("\nText  :",text,
         "\nBytes32:",b_text)
     if b_size > 64:
         print("WARNING! Input too long and has been truncated!")
@@ -45,8 +44,8 @@ def _create_Input(_desc="", _data_sha256="", _data_ipfs=""):
 
 if __name__ == '__main__':
 
-    _create_Input("OpenSeed Test 3")
-
+    #_create_Input("Here is desc", "data_sha256", "data_ipfs") #如果你没有data_ipfs，可以将其设置为""
+    _create_Input("OPEN SEED")
     '''
     stringToBytes32("Auto Padding")
     stringToBytes32("Input too long will be cut off. Input too long will be cut off.")
