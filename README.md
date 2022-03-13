@@ -1,7 +1,7 @@
 ## 什么是OpenSeed？
 [ZH](/README.md)  [EN](/README_en.md)
 
-OpenSeed 是一个用于提供随机数/随机种子 (randmon seed) 的智能合约。
+OpenSeed 是一个用于提供随机数/随机种子 (random seed) 的智能合约。
 OpenSeed 将随机数使用记录到区块链上，证明你在实验中**真的使用了"随机数"**。
 
 - 👨🏻‍💻 OpenSeed 部署在以太坊测试链上 ([Ethereum Ropsten testnet](https://ropsten.etherscan.io))
