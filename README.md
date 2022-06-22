@@ -1,4 +1,4 @@
-## 什么是OpenSeed？
+## 什么是OpenSeed ？
 [ZH](/README.md)  [EN](/README_en.md)
 
 OpenSeed 是一个用于提供随机数/随机种子 (random seed) 的智能合约。
